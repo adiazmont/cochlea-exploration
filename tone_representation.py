@@ -365,11 +365,9 @@ def tones_to_spike_trains(fs=100e3, f0=440, partials=10, ramp_duration=5, signal
     return anf
 
 
-import matplotlib.pyplot as plt
-
 # Generate spike trains for regular and irregular ANFs
 anf_regular = tones_to_spike_trains()
-anf_irregular = tones_to_spike_trains(signal_type='irregular')
+# anf_irregular = tones_to_spike_trains(signal_type='irregular')
 
 # Create the raster plot
 plt.figure(figsize=(12, 7))
@@ -378,7 +376,7 @@ plt.figure(figsize=(12, 7))
 th.plot_raster(anf_regular, color='blue', label='Regular ANFs')
 
 # Plot the irregular ANFs in red
-th.plot_raster(anf_irregular, color='red', label='Irregular ANFs')
+# th.plot_raster(anf_irregular, color='red', label='Irregular ANFs')
 
 # Add title and labels
 plt.xlabel("Time (s)")
