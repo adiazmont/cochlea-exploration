@@ -307,7 +307,9 @@ def species_nerve_fibers(species='human'):
     elif species is 'macaque':
         return 20000, 7000, 3000
     else: # is human
-        return 20000, 10000, 3000
+        # return 20000, 10000, 3000
+        # fixme: downsampling because of debugging Segmentation fault (core dumped) error
+        return 2000, 1000, 300
 
 def map_tone_to_spike_train():
     return
