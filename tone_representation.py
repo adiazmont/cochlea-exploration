@@ -324,25 +324,25 @@ def tones_to_spike_trains(fs=100e3, f0=440, partials=10, ramp_duration=5, signal
             ramp_duration: Linear ramp in ms
             signal_type: regular or irregular
     """
-    a_tones = [tone_generator.generate_harmonic_tone_with_envelope(f0, partials, d, fs, ramp_duration,
-                                                                   "A")[0] for d in [50, 100, 200]]
-
-    if signal_type is 'regular':
-        # Simple sequences
-        # fixme: downsampling to test quick performance
-        regular_sequence, regular_onsets = tone_generator.create_tone_sequence(a_tones, [5, 10, 20],
-                                                                               4, 0, 2,
-                                                                           [4, 4, 4])
-        regular_rhythm_signal = tone_generator.generate_audio_from_sequence_simple(regular_sequence, regular_onsets, fs)
-        input_signal = regular_rhythm_signal
-    else:
-        irregular_sequence, irregular_onsets = tone_generator.create_tone_sequence(a_tones, [50, 100, 200],
-                                                                                   50, 0, 25,
-                                                                                   [400, 400, 400],
-                                                                                   randomize=True)
-
-        irregular_rhythm_signal = tone_generator.generate_audio_from_sequence_simple(irregular_sequence, irregular_onsets, fs)
-        input_signal = irregular_rhythm_signal
+    # a_tones = [tone_generator.generate_harmonic_tone_with_envelope(f0, partials, d, fs, ramp_duration,
+    #                                                                "A")[0] for d in [50, 100, 200]]
+    #
+    # if signal_type is 'regular':
+    #     # Simple sequences
+    #     # fixme: downsampling to test quick performance
+    #     regular_sequence, regular_onsets = tone_generator.create_tone_sequence(a_tones, [50, 100, 200],
+    #                                                                            4, 0, 2,
+    #                                                                        [400, 400, 400])
+    #     regular_rhythm_signal = tone_generator.generate_audio_from_sequence_simple(regular_sequence, regular_onsets, fs)
+    #     input_signal = regular_rhythm_signal
+    # else:
+    #     irregular_sequence, irregular_onsets = tone_generator.create_tone_sequence(a_tones, [50, 100, 200],
+    #                                                                                50, 0, 25,
+    #                                                                                [400, 400, 400],
+    #                                                                                randomize=True)
+    #
+    #     irregular_rhythm_signal = tone_generator.generate_audio_from_sequence_simple(irregular_sequence, irregular_onsets, fs)
+    #     input_signal = irregular_rhythm_signal
 
     # Define containers to record results
 
@@ -354,46 +354,61 @@ def tones_to_spike_trains(fs=100e3, f0=440, partials=10, ramp_duration=5, signal
     cf = species_center_frequencies()
 
     # cochlea model
-    anf = cochlea.run_zilany2014(
-        input_signal,
-        fs,
-        anf_num=anf,
-        cf=cf,
-        seed=0,
-        powerlaw='approximate',
-        species='human',
-        ffGn=False
-    )
+    # anf = cochlea.run_zilany2014(
+    #     input_signal,
+    #     fs,
+    #     anf_num=anf,
+    #     cf=cf,
+    #     seed=0,
+    #     powerlaw='approximate',
+    #     species='human',
+    #     ffGn=False
+    # )
+    time.sleep(3)
 
     return anf
 
 
+import time
+
+# Start the timer
+start_time = time.time()
+
+# Call the function
 # Generate spike trains for regular and irregular ANFs
 anf_regular = tones_to_spike_trains()
+
+# Stop the timer
+end_time = time.time()
+
+# Calculate elapsed time
+elapsed_time = end_time - start_time
+print(f"Execution time: {elapsed_time:.2f} seconds")
+
 # anf_irregular = tones_to_spike_trains(signal_type='irregular')
 
-# Create the raster plot
-plt.figure(figsize=(12, 7))
-
-# Plot the regular ANFs in blue
-th.plot_raster(anf_regular, color='blue', label='Regular ANFs')
-
-# Plot the irregular ANFs in red
-# th.plot_raster(anf_irregular, color='red', label='Irregular ANFs')
-
-# Add title and labels
-plt.xlabel("Time (s)")
-plt.ylabel("ANF Fiber Index")
-
-# Add legend
-plt.legend()
-
-# Save the raster plot to a PNG file
-filename = f"regular_and_irregular_tone_sequences_raster.png"
-plt.savefig(filename, format="png")
-
-# Display the plot
-plt.show()
-
-# Close the plot to free up memory
-plt.close()
+# # Create the raster plot
+# plt.figure(figsize=(12, 7))
+#
+# # Plot the regular ANFs in blue
+# th.plot_raster(anf_regular, color='blue', label='Regular ANFs')
+#
+# # Plot the irregular ANFs in red
+# # th.plot_raster(anf_irregular, color='red', label='Irregular ANFs')
+#
+# # Add title and labels
+# plt.xlabel("Time (s)")
+# plt.ylabel("ANF Fiber Index")
+#
+# # Add legend
+# plt.legend()
+#
+# # Save the raster plot to a PNG file
+# filename = f"regular_and_irregular_tone_sequences_raster.png"
+# plt.savefig(filename, format="png")
+#
+# # Display the plot
+# plt.show()
+#
+# # Close the plot to free up memory
+# plt.close()
