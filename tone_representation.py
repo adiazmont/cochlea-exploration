@@ -383,7 +383,14 @@ elapsed_time = end_time - start_time
 # Convert to hours, minutes, seconds
 hours, rem = divmod(elapsed_time, 3600)
 minutes, seconds = divmod(rem, 60)
-print(f"Execution time: {int(hours)} hours, {int(minutes)} minutes, and {seconds:.2f} seconds")
+# Create the message
+execution_time_message = (
+    f"Execution time: {int(hours)} hours, {int(minutes)} minutes, "
+    f"and {seconds:.2f} seconds"
+)
+# Save to a text file
+with open("execution_time.txt", "w") as file:
+    file.write(execution_time_message)
 
 # anf_irregular = tones_to_spike_trains(signal_type='irregular')
 
