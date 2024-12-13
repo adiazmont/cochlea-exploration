@@ -8,7 +8,29 @@ from matplotlib.animation import FuncAnimation
 import sounddevice as sd
 import sys
 import numpy as np
+import selezneva2013rhythm as tone_generator
 
+
+def test_greenwood():
+    # human
+    x = np.linspace(0, 35e-3, 20000)
+    freq = cochlea.greenwood(x, A=165.4, a=60, k=0.88)
+    plt.plot(x, freq, 'purple', label="human")
+    # cat
+    x = np.linspace(0, 25e-3, 20000)
+    freq = cochlea.greenwood(x, A=456, a=84, k=0.8)
+    plt.plot(x, freq, 'r', label="cat")
+    # macaque
+    x = np.linspace(0, 25.6e-3, 20000)
+    freq = cochlea.greenwood(x, A=360, a=82, k=0.85)
+    plt.plot(x, freq, 'b', label="macaque")
+
+    plt.xlabel("Distance from apex (mm)")
+    plt.ylabel("Frequency (Hz)")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+    return
 
 def signals_for_dbspl():
     # Signal parameters
@@ -256,29 +278,29 @@ def animate_tones():
 
     plt.show()
 
-def species_center_frequencies(num=15000, species='human'):
+def species_center_frequencies(species='human'):
     # characteristic frequencies (min_cf, max_cf, num_cf)
     """
     _greenwood_pars  = {
-    'human': {'A': 165.4, 'a': 60, 'k': 0.88, 'length': 35e-3},
-    'cat': {'A': 456, 'a': 84, 'k': 0.8, 'length': 25e-3},
+        'human': {'A': 165.4, 'a': 60, 'k': 0.88, 'length': 35e-3},
+        'cat': {'A': 456, 'a': 84, 'k': 0.8, 'length': 25e-3},
+        ADDED:
+        'macaque': {'A': 360, 'a': 82, 'k': 0.85, 'length': 25.6e-3}
 
-    'macaque': {'A': 0.36, 'a': 0.082, 'k': 0.85, 'length': 25.6e-3}
-
-    the number of inner hair cells is relatively conserved among mammals
-}
-    :param num:
+        the number of inner hair cells is relatively conserved among mammals
+    }
+    LF range is 1, 20, and 20 (cat, macaque and human), but cochlea tool has a Highpass filter at 124Hz
     :param species:
-    :return:
+    :return: (low freq, high freq, number of cells)
     """
     if species is 'cat':
-        return 1, 60000, 3500
+        return 125, 60000, 3500
     elif species is 'macaque':
-        return 20, 45000, 3500
+        return 125, 45000, 3500
     else: # is human
-        return 20, 20000, 3500
+        return 125, 20000, 3500
 
-def species_nerve_fibers(num=15000, species='human'):
+def species_nerve_fibers(species='human'):
     # (HSR#, MSR#, LSR#)
     if species is 'cat':
         return 20000, 5000, 3000
@@ -290,32 +312,87 @@ def species_nerve_fibers(num=15000, species='human'):
 def map_tone_to_spike_train():
     return
 
-def tones_to_spike_trains():
-    # Define the tones to characterize
+def tones_to_spike_trains(fs=100e3, f0=440, partials=10, ramp_duration=5, signal_type='regular'):
+    """# Define the tones to characterize
+         Parameters
+            fs: Sampling rate
+                Note: cochlea.zilany2014._zilany2014.run_ihc AssertionError: Wrong Fs: 100e3 <= fs <= 500e3
+            f0: A-tone fundamental frequency
+            partials: Number of harmonics
+            ramp_duration: Linear ramp in ms
+            signal_type: regular or irregular
+    """
+    a_tones = [tone_generator.generate_harmonic_tone_with_envelope(f0, partials, d, fs, ramp_duration,
+                                                                   "A")[0] for d in [50, 100, 200]]
+
+    if signal_type is 'regular':
+        # Simple sequences
+        regular_sequence, regular_onsets = tone_generator.create_tone_sequence(a_tones, [50, 100, 200],
+                                                                               50, 0, 25,
+                                                                           [400, 400, 400])
+        regular_rhythm_signal = tone_generator.generate_audio_from_sequence_simple(regular_sequence, regular_onsets, fs)
+        input_signal = regular_rhythm_signal
+    else:
+        irregular_sequence, irregular_onsets = tone_generator.create_tone_sequence(a_tones, [50, 100, 200],
+                                                                                   50, 0, 25,
+                                                                                   [400, 400, 400],
+                                                                                   randomize=True)
+
+        irregular_rhythm_signal = tone_generator.generate_audio_from_sequence_simple(irregular_sequence, irregular_onsets, fs)
+        input_signal = irregular_rhythm_signal
 
     # Define containers to record results
 
     # Define number of seeds == number of tests == number of models
 
     # Define hair cells
+    anf = species_nerve_fibers()
     # Define characteristic frequencies (min_cf, max_cf, num_cf)
+    cf = species_center_frequencies()
 
-    return
+    # cochlea model
+    anf = cochlea.run_zilany2014(
+        input_signal,
+        fs,
+        anf_num=anf,
+        cf=cf,
+        seed=0,
+        powerlaw='approximate',
+        species='human',
+        ffGn=False
+    )
+
+    return anf
 
 
-def test_greenwood():
-    x = np.linspace(0, 35e-3, 2000)
+import matplotlib.pyplot as plt
 
-    freq = cochlea.greenwood(x, A=165, a=60, k=1)
+# Generate spike trains for regular and irregular ANFs
+anf_regular = tones_to_spike_trains()
+anf_irregular = tones_to_spike_trains(signal_type='irregular')
 
-    plt.plot(x, freq)
-    plt.show()
-    return
-# Call the function
-# animate_tones()
+# Create the raster plot
+plt.figure(figsize=(12, 7))
 
-# Call the function
-# tones()
-# calc_mod_gain()
-# process_dbspl(60)
-test_greenwood()
+# Plot the regular ANFs in blue
+th.plot_raster(anf_regular, color='blue', label='Regular ANFs')
+
+# Plot the irregular ANFs in red
+th.plot_raster(anf_irregular, color='red', label='Irregular ANFs')
+
+# Add title and labels
+plt.xlabel("Time (s)")
+plt.ylabel("ANF Fiber Index")
+
+# Add legend
+plt.legend()
+
+# Save the raster plot to a PNG file
+filename = f"regular_and_irregular_tone_sequences_raster.png"
+plt.savefig(filename, format="png")
+
+# Display the plot
+plt.show()
+
+# Close the plot to free up memory
+plt.close()
