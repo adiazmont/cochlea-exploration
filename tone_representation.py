@@ -329,9 +329,10 @@ def tones_to_spike_trains(fs=100e3, f0=440, partials=10, ramp_duration=5, signal
 
     if signal_type is 'regular':
         # Simple sequences
-        regular_sequence, regular_onsets = tone_generator.create_tone_sequence(a_tones, [50, 100, 200],
+        # fixme: downsampling to test quick performance
+        regular_sequence, regular_onsets = tone_generator.create_tone_sequence(a_tones, [5, 10, 20],
                                                                                50, 0, 25,
-                                                                           [400, 400, 400])
+                                                                           [40, 40, 40])
         regular_rhythm_signal = tone_generator.generate_audio_from_sequence_simple(regular_sequence, regular_onsets, fs)
         input_signal = regular_rhythm_signal
     else:
