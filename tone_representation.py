@@ -383,7 +383,10 @@ end_time = time.time()
 
 # Calculate elapsed time
 elapsed_time = end_time - start_time
-print(f"Execution time: {elapsed_time:.2f} seconds")
+# Convert to hours, minutes, seconds
+hours, rem = divmod(elapsed_time, 3600)
+minutes, seconds = divmod(rem, 60)
+print(f"Execution time: {int(hours)} hours, {int(minutes)} minutes, and {seconds:.2f} seconds")
 
 # anf_irregular = tones_to_spike_trains(signal_type='irregular')
 
