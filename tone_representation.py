@@ -7,6 +7,7 @@ from cochlea.stats import calc_modulation_gain
 from matplotlib.animation import FuncAnimation
 import numpy as np
 import selezneva2013rhythm as tone_generator
+import pickle
 
 
 def test_greenwood():
@@ -374,6 +375,9 @@ start_time = time.time()
 # Call the function
 # Generate spike trains for regular and irregular ANFs
 anf_regular = tones_to_spike_trains()
+with open("anf.pkl", "wb") as f:
+    pickle.dump(anf_regular, f)
+
 
 # Stop the timer
 end_time = time.time()
