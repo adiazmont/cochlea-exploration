@@ -330,9 +330,9 @@ def species_nerve_fibers(species='human'):
     elif species is 'macaque':
         return 20000, 7000, 3000
     else: # is human
-        # return 20000, 10000, 3000
+        return 20000, 10000, 3000
         # fixme: downsampling because of debugging Segmentation fault (core dumped) error
-        return 2000, 1000, 300
+        # return 2000, 1000, 300
 
 def map_tone_to_spike_train():
     return
@@ -399,7 +399,7 @@ start_time = time.time()
 # Call the function
 # Generate spike trains for regular and irregular ANFs
 anf_regular = tones_to_spike_trains()
-with open("anf.pkl", "wb") as f:
+with open("anf_20K_10K_3K.pkl", "wb") as f:
     pickle.dump(anf_regular, f)
 
 
@@ -417,33 +417,33 @@ execution_time_message = (
     f"and {seconds:.2f} seconds"
 )
 # Save to a text file
-with open("execution_time.txt", "w") as file:
+with open("execution_time_20K_10K_3K.txt", "w") as file:
     file.write(execution_time_message)
 
 # anf_irregular = tones_to_spike_trains(signal_type='irregular')
 
-# Create the raster plot
-plt.figure(figsize=(12, 7))
-
-# Plot the regular ANFs in blue
-th.plot_raster(anf_regular, color='blue', label='Regular ANFs')
-
-# Plot the irregular ANFs in red
-# th.plot_raster(anf_irregular, color='red', label='Irregular ANFs')
-
-# Add title and labels
-plt.xlabel("Time (s)")
-plt.ylabel("ANF Fiber Index")
-
-# Add legend
-plt.legend()
-
-# Save the raster plot to a PNG file
-filename = f"regular_and_irregular_tone_sequences_raster.png"
-plt.savefig(filename, format="png")
-
-# Display the plot
-# plt.show()
-
-# Close the plot to free up memory
-plt.close()
+# # Create the raster plot
+# plt.figure(figsize=(12, 7))
+#
+# # Plot the regular ANFs in blue
+# th.plot_raster(anf_regular, color='blue', label='Regular ANFs')
+#
+# # Plot the irregular ANFs in red
+# # th.plot_raster(anf_irregular, color='red', label='Irregular ANFs')
+#
+# # Add title and labels
+# plt.xlabel("Time (s)")
+# plt.ylabel("ANF Fiber Index")
+#
+# # Add legend
+# plt.legend()
+#
+# # Save the raster plot to a PNG file
+# filename = f"regular_and_irregular_tone_sequences_raster.png"
+# plt.savefig(filename, format="png")
+#
+# # Display the plot
+# # plt.show()
+#
+# # Close the plot to free up memory
+# plt.close()
