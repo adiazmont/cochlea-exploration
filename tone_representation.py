@@ -97,7 +97,7 @@ def process_dbspl(db_spl):
     plt.ylabel("ANF Fiber Index")
 
     # Save the raster plot to a PNG file
-    filename = f"3KHSR_5KMSR_4KLSR_anf_raster_{db_spl}dB_SPL.png"
+    filename = f"anf_raster_{db_spl}dB_SPL.png"
     # plt.savefig(filename, format="png")
     plt.show()
     # Close the plot to free up memory
