@@ -122,6 +122,30 @@ def calc_mod_gain():
     gains.plot(logx=True)
     plt.show()
 
+
+def get_simple_tone():
+    # Parameters
+    sample_rate = 44100  # Sampling frequency (samples per second)
+    duration = 0.5  # Duration in seconds
+    carrier_freq = 440  # Carrier frequency in Hz
+    modulation_freq = 10000  # Modulation frequency in Hz
+    modulation_depth = 0.  # Modulation depth (0 to 1)
+
+    # Time array
+    t = np.linspace(0, duration, int(sample_rate * duration), endpoint=False)
+
+    # Generate carrier wave
+    carrier = np.sin(2 * np.pi * carrier_freq * t)
+
+    # Generate modulator wave (scaled to 0.5 to 1.0 for modulation depth)
+    modulator = 1 + modulation_depth * np.sin(2 * np.pi * modulation_freq * t)
+
+    # Apply amplitude modulation
+    am_tone = carrier * modulator
+
+    return am_tone
+
+
 def tones():
 
     # Parameters
@@ -141,7 +165,7 @@ def tones():
     modulator = 1 + modulation_depth * np.sin(2 * np.pi * modulation_freq * t)
 
     # Apply amplitude modulation
-    am_tone = carrier * modulator
+    am_tone = get_simple_tone()
 
     # Play the sound
     # sd.play(am_tone, sample_rate)
@@ -323,25 +347,25 @@ def tones_to_spike_trains(fs=100e3, f0=440, partials=10, ramp_duration=5, signal
             ramp_duration: Linear ramp in ms
             signal_type: regular or irregular
     """
-    a_tones = [tone_generator.generate_harmonic_tone_with_envelope(f0, partials, d, fs, ramp_duration,
-                                                                   "A")[0] for d in [50, 100, 200]]
-
-    if signal_type is 'regular':
-        # Simple sequences
-        # fixme: downsampling to test quick performance
-        regular_sequence, regular_onsets = tone_generator.create_tone_sequence(a_tones, [50, 100, 200],
-                                                                               4, 0, 2,
-                                                                           [400, 400, 400])
-        regular_rhythm_signal = tone_generator.generate_audio_from_sequence_simple(regular_sequence, regular_onsets, fs)
-        input_signal = regular_rhythm_signal
-    else:
-        irregular_sequence, irregular_onsets = tone_generator.create_tone_sequence(a_tones, [50, 100, 200],
-                                                                                   50, 0, 25,
-                                                                                   [400, 400, 400],
-                                                                                   randomize=True)
-
-        irregular_rhythm_signal = tone_generator.generate_audio_from_sequence_simple(irregular_sequence, irregular_onsets, fs)
-        input_signal = irregular_rhythm_signal
+    # a_tones = [tone_generator.generate_harmonic_tone_with_envelope(f0, partials, d, fs, ramp_duration,
+    #                                                                "A")[0] for d in [50, 100, 200]]
+    #
+    # if signal_type is 'regular':
+    #     # Simple sequences
+    #     # fixme: downsampling to test quick performance
+    #     regular_sequence, regular_onsets = tone_generator.create_tone_sequence(a_tones, [50, 100, 200],
+    #                                                                            4, 0, 2,
+    #                                                                        [400, 400, 400])
+    #     regular_rhythm_signal = tone_generator.generate_audio_from_sequence_simple(regular_sequence, regular_onsets, fs)
+    #     input_signal = regular_rhythm_signal
+    # else:
+    #     irregular_sequence, irregular_onsets = tone_generator.create_tone_sequence(a_tones, [50, 100, 200],
+    #                                                                                50, 0, 25,
+    #                                                                                [400, 400, 400],
+    #                                                                                randomize=True)
+    #
+    #     irregular_rhythm_signal = tone_generator.generate_audio_from_sequence_simple(irregular_sequence, irregular_onsets, fs)
+    #     input_signal = irregular_rhythm_signal
 
     # Define containers to record results
 
@@ -351,7 +375,7 @@ def tones_to_spike_trains(fs=100e3, f0=440, partials=10, ramp_duration=5, signal
     anf = species_nerve_fibers()
     # Define characteristic frequencies (min_cf, max_cf, num_cf)
     cf = species_center_frequencies()
-
+    input_signal = get_simple_tone()
     # cochlea model
     anf = cochlea.run_zilany2014(
         input_signal,

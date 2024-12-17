@@ -149,7 +149,7 @@ def test():
     b_tones = [generate_harmonic_tone_with_envelope(f0, partials, d, fs, ramp_duration, "B")[0] for d in [50, 100, 200]]
 
     # Simple sequences
-    regular_sequence, regular_onsets = create_tone_sequence(a_tones, [50, 100, 200], 50, 0, 25, [400, 400, 400])
+    regular_sequence, regular_onsets = create_tone_sequence(a_tones, [50, 100, 200], 4, 0, 2, [400, 400, 400])
     irregular_sequence, irregular_onsets = create_tone_sequence(a_tones, [50, 100, 200], 50, 0, 25, [400, 400, 400],
                                                                 randomize=True)
 
@@ -169,8 +169,8 @@ def test():
 
 
     # Generate the audio signal for the regular sequence
-    # audio_signal = generate_audio_from_sequence_simple(regular_sequence, regular_onsets, fs)
-    audio_signal = generate_audio_from_sequence_simple(irregular_sequence, regular_onsets, fs)
+    audio_signal = generate_audio_from_sequence_simple(regular_sequence, regular_onsets, fs)
+    # audio_signal = generate_audio_from_sequence_simple(irregular_sequence, regular_onsets, fs)
     # TODO: check that the complex signals are created correctly
     # audio_signal = generate_audio_from_sequence_complex(complex_regular_sequence, complex_regular_onsets, fs)
     # audio_signal = generate_audio_from_sequence_complex(complex_irregular_sequence, complex_irregular_onsets, fs)
