@@ -126,8 +126,8 @@ def calc_mod_gain():
 def get_simple_tone():
     # Parameters
     sample_rate = 44100  # Sampling frequency (samples per second)
-    duration = 5  # Duration in seconds
-    carrier_freq = 1500  # Carrier frequency in Hz
+    duration = 10  # Duration in seconds
+    carrier_freq = 3000  # Carrier frequency in Hz
     modulation_freq = 10000  # Modulation frequency in Hz
     modulation_depth = 0.  # Modulation depth (0 to 1)
 
@@ -392,13 +392,15 @@ def tones_to_spike_trains(fs=100e3, f0=440, partials=10, ramp_duration=5, signal
 
 import time
 
+file_name = "2H_1H_30_10s_3KHz"
 # Start the timer
 start_time = time.time()
 
 # Call the function
 # Generate spike trains for regular and irregular ANFs
 anf_regular = tones_to_spike_trains()
-with open("anf_2H_1H_30_5s_1500Hz.pkl", "wb") as f:
+anf_file_name = "anf_" + file_name + ".pkl"
+with open(anf_file_name, "wb") as f:
     pickle.dump(anf_regular, f)
 
 
@@ -416,7 +418,8 @@ execution_time_message = (
     f"and {seconds:.2f} seconds"
 )
 # Save to a text file
-with open("execution_time_2H_1H_30_5s_1500Hz.txt", "w") as file:
+time_fname = "execution_time_" + file_name + ".txt"
+with open(time_fname, "w") as file:
     file.write(execution_time_message)
 
 # anf_irregular = tones_to_spike_trains(signal_type='irregular')
