@@ -126,7 +126,7 @@ def calc_mod_gain():
 def get_simple_tone():
     # Parameters
     sample_rate = 44100  # Sampling frequency (samples per second)
-    duration = 0.5  # Duration in seconds
+    duration = 2  # Duration in seconds
     carrier_freq = 440  # Carrier frequency in Hz
     modulation_freq = 10000  # Modulation frequency in Hz
     modulation_depth = 0.  # Modulation depth (0 to 1)
@@ -330,9 +330,8 @@ def species_nerve_fibers(species='human'):
     elif species is 'macaque':
         return 20000, 7000, 3000
     else: # is human
-        return 20000, 10000, 3000
-        # fixme: downsampling because of debugging Segmentation fault (core dumped) error
-        # return 2000, 1000, 300
+        # return 20000, 10000, 3000
+        return 2000, 1000, 300
 
 def map_tone_to_spike_train():
     return
@@ -399,7 +398,7 @@ start_time = time.time()
 # Call the function
 # Generate spike trains for regular and irregular ANFs
 anf_regular = tones_to_spike_trains()
-with open("anf_20K_10K_3K.pkl", "wb") as f:
+with open("anf_2K_1K_3H_2s_440Hz.pkl", "wb") as f:
     pickle.dump(anf_regular, f)
 
 
@@ -417,7 +416,7 @@ execution_time_message = (
     f"and {seconds:.2f} seconds"
 )
 # Save to a text file
-with open("execution_time_20K_10K_3K.txt", "w") as file:
+with open("execution_time_2K_1K_3H_2s_440Hz.txt", "w") as file:
     file.write(execution_time_message)
 
 # anf_irregular = tones_to_spike_trains(signal_type='irregular')
